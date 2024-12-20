@@ -1,16 +1,26 @@
-cmake_minimum_required(VERSION 3.12)
-project(app
-        VERSION 0.0.0
-        DESCRIPTION "Application module"
-        LANGUAGES C CXX
+cmake_minimum_required(VERSION 3.10)
+project(BlockCache LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include_directories(include)
+add_subdirectory(src)
+
+# Либа lab2
+add_library(lab2 SHARED)
+target_sources(lab2
+    PRIVATE
+        src/cache.cpp
+        src/file_api.cpp
 )
+target_include_directories(lab2 PUBLIC include)
+target_link_libraries(lab2 pthread)
 
-cmake_policy(SET CMP0076 NEW) # avoid warning of relative paths translation
+# Основной main
+add_executable(main_app src/main.cpp)
+target_link_libraries(main_app lab2)
 
-add_executable(app)
-target_include_directories(app PRIVATE ${CMAKE_SOURCE_DIR})
-
-target_sources(app
-        PRIVATE
-        app.c # or app.cpp
-)
+# Бенчмарк
+add_executable(benchmark_app src/benchmark.cpp)
+target_link_libraries(benchmark_app lab2)
